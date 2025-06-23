@@ -1,0 +1,27 @@
+{
+  "canisters": {
+    "notetaking_app_backend": {
+      "candid": "src/notetaking_app_backend/notetaking_app_backend.did",
+      "package": "notetaking_app_backend",
+      "type": "rust"
+    },
+    "notetaking_app_frontend": {
+      "dependencies": [
+        "notetaking_app_backend"
+      ],
+      "source": [
+        "src/notetaking_app_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "notetaking_app_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
