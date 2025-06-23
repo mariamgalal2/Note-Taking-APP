@@ -1,30 +1,56 @@
-import { useState } from 'react';
-import { notetaking_app_backend } from 'declarations/notetaking_app_backend';
+import React, { useState, useEffect } from "react";
+// import { notetaking_app_backend } from "declarations/notetaking_app_backend";
+import { notetaking_app_backend } from "../../declarations/notetaking_app_backend";
+window.backend = notetaking_app_backend;
 
 function App() {
-  const [greeting, setGreeting] = useState('');
+  const [notes, setNotes] = useState([]);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    notetaking_app_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
+  const fetchNotes = async () => {
+    const allNotes = await notetaking_app_backend.get_notes();
+    setNotes(allNotes);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await notetaking_app_backend.add_note(title, content);
+    setTitle("");
+    setContent("");
+    fetchNotes();
+  };
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
+    <div style={{ padding: "2rem", fontFamily: "Arial" }}>
+      <h1>📓 Note Taking App</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          required
+        /><br /><br />
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Note content"
+          required
+        /><br /><br />
+        <button type="submit">Add Note</button>
       </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+
+      <h2>🗒 Notes</h2>
+      <ul>
+        {notes.map((note, index) => (
+          <li key={index}><strong>{note.title}</strong>: {note.content}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
